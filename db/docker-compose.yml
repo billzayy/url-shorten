@@ -1,0 +1,38 @@
+# version: '3'
+
+services:
+  backend:
+    image: coderbillzay/url-shorten
+    container_name: backend
+    ports:
+      - "8080:8080"
+    networks:
+      - redis-networks
+    links:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: secret
+    volumes:
+      - ./cache:/data
+    networks:
+      - redis-networks
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    volumes:
+      - ./redis-insight:/data
+    networks:
+      - redis-networks
+
+networks:
+  redis-networks:
+    driver: bridge
